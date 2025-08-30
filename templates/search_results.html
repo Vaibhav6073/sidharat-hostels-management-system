@@ -1,0 +1,84 @@
+{% extends "base.html" %}
+
+{% block title %}Search Results - Sidharat Hostels{% endblock %}
+
+{% block content %}
+<div class="row mb-4">
+    <div class="col-12">
+        <h1 class="text-center mb-4">
+            <i class="fas fa-search text-primary"></i> 
+            Search Results for "{{ query }}"
+        </h1>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <h5 class="mb-0">
+                    <i class="fas fa-list"></i> Found {{ students|length }} student(s)
+                </h5>
+                <a href="{{ url_for('index') }}" class="btn btn-secondary">
+                    <i class="fas fa-arrow-left"></i> Back to Dashboard
+                </a>
+            </div>
+            <div class="card-body">
+                {% if students %}
+                <div class="table-responsive">
+                    <table class="table table-hover">
+                        <thead>
+                            <tr>
+                                <th><i class="fas fa-hashtag"></i> ID</th>
+                                <th><i class="fas fa-user"></i> Name</th>
+                                <th><i class="fas fa-phone"></i> Phone</th>
+                                <th><i class="fas fa-door-closed"></i> Room</th>
+                                <th><i class="fas fa-calendar"></i> Check-in Date</th>
+                                <th><i class="fas fa-rupee-sign"></i> Monthly Fee</th>
+                                <th><i class="fas fa-cogs"></i> Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for student in students %}
+                            <tr>
+                                <td>{{ student.id }}</td>
+                                <td>
+                                    <strong>{{ student.name }}</strong>
+                                </td>
+                                <td>
+                                    <i class="fas fa-phone-alt text-muted"></i> {{ student.phone }}
+                                </td>
+                                <td>
+                                    <span class="badge bg-primary">Room {{ student.room_number }}</span>
+                                </td>
+                                <td>{{ student.check_in_date }}</td>
+                                <td>
+                                    <span class="text-success fw-bold">₹{{ student.monthly_fee }}</span>
+                                </td>
+                                <td>
+                                    <a href="{{ url_for('remove_student', student_id=student.id) }}" 
+                                       class="btn btn-danger btn-sm"
+                                       onclick="return confirm('Are you sure you want to remove this student?')">
+                                        <i class="fas fa-trash"></i> Remove
+                                    </a>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                {% else %}
+                <div class="text-center py-5">
+                    <i class="fas fa-search fa-4x text-muted mb-3"></i>
+                    <h4 class="text-muted">No Results Found</h4>
+                    <p class="text-muted">No students found matching "{{ query }}"</p>
+                    <a href="{{ url_for('index') }}" class="btn btn-primary">
+                        <i class="fas fa-arrow-left"></i> Back to Dashboard
+                    </a>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

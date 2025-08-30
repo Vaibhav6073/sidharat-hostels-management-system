@@ -1,0 +1,165 @@
+{% extends "base.html" %}
+
+{% block title %}Rooms - Sidharat Hostels{% endblock %}
+
+{% block content %}
+<div class="row mb-4">
+    <div class="col-12">
+        <h1 class="text-center mb-4">
+            <i class="fas fa-building text-primary"></i> 
+            Floor-wise Room Management
+        </h1>
+    </div>
+</div>
+
+<!-- Add Room Modal Button -->
+<div class="row mb-3">
+    <div class="col-12 text-end">
+        <button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#addRoomModal">
+            <i class="fas fa-plus"></i> Add New Room
+        </button>
+    </div>
+</div>
+
+<!-- Floor-wise Room Display -->
+{% for floor_num, floor_data in floors_data.items() %}
+<div class="row mb-4">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header bg-primary text-white">
+                <h4 class="mb-0">
+                    <i class="fas fa-layer-group"></i> {{ floor_data.name }}
+                    <span class="badge bg-light text-dark ms-2">{{ floor_data.rooms|length }} rooms</span>
+                </h4>
+            </div>
+            <div class="card-body">
+                {% if floor_data.rooms %}
+                <div class="row">
+                    {% for room in floor_data.rooms %}
+                    <div class="col-lg-3 col-md-4 col-sm-6 col-12 mb-3">
+                        <div class="card h-100 {% if room.occupied == 0 %}border-success{% elif room.occupied < room.capacity %}border-warning{% else %}border-danger{% endif %}">
+                            <div class="card-body text-center p-2">
+                                <h6 class="card-title d-flex justify-content-between align-items-center">
+                                    <span><i class="fas fa-door-closed"></i> Room {{ room.room_number }}</span>
+                                    <button class="btn btn-danger btn-sm" 
+                                            onclick="removeRoom({{ room.room_number }})"
+                                            title="Remove Room">
+                                        <i class="fas fa-trash"></i>
+                                    </button>
+                                </h6>
+                                <div class="mb-2">
+                                    {% if room.occupied == 0 %}
+                                        <span class="badge bg-success">Available</span>
+                                    {% elif room.occupied < room.capacity %}
+                                        <span class="badge bg-warning">Partial</span>
+                                    {% else %}
+                                        <span class="badge bg-danger">Full</span>
+                                    {% endif %}
+                                </div>
+                                <p class="card-text small">
+                                    <strong>Occupancy:</strong> {{ room.occupied }}/{{ room.capacity }}<br>
+                                    <strong>Monthly Rent:</strong> ₹{{ "%.0f"|format(room.room_rent) }}
+                                </p>
+                                
+                                <!-- Capacity Update Form -->
+                                <form method="POST" action="{{ url_for('update_capacity', room_number=room.room_number) }}" class="mb-2">
+                                    <div class="input-group input-group-sm">
+                                        <span class="input-group-text">Cap</span>
+                                        <input type="number" class="form-control" name="capacity" 
+                                               value="{{ room.capacity }}" min="1" max="10" required>
+                                        <button type="submit" class="btn btn-primary btn-sm">
+                                            <i class="fas fa-save"></i>
+                                        </button>
+                                    </div>
+                                </form>
+                                
+                                <!-- Rent Update Form -->
+                                <form method="POST" action="{{ url_for('update_rent', room_number=room.room_number) }}" class="mb-2">
+                                    <div class="input-group input-group-sm">
+                                        <span class="input-group-text">₹</span>
+                                        <input type="number" class="form-control" name="rent" 
+                                               value="{{ "%.0f"|format(room.room_rent) }}" min="0" max="50000" step="100" required>
+                                        <button type="submit" class="btn btn-success btn-sm">
+                                            <i class="fas fa-rupee-sign"></i>
+                                        </button>
+                                    </div>
+                                </form>
+                                
+                                {% if room.students %}
+                                <div class="mt-2">
+                                    <small class="text-muted">
+                                        <strong>Students:</strong><br>
+                                        {{ room.students.replace(',', '<br>')|safe }}
+                                    </small>
+                                </div>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+                {% else %}
+                <div class="text-center py-3">
+                    <i class="fas fa-bed fa-2x text-muted mb-2"></i>
+                    <p class="text-muted">No rooms on this floor</p>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endfor %}
+
+<!-- Add Room Modal -->
+<div class="modal fade" id="addRoomModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">
+                    <i class="fas fa-plus"></i> Add New Room
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <form method="POST" action="{{ url_for('add_room') }}">
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label class="form-label">Floor</label>
+                        <select class="form-control" name="floor" required>
+                            <option value="0">Ground Floor</option>
+                            <option value="1">First Floor</option>
+                            <option value="2">Second Floor</option>
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Room Number</label>
+                        <input type="number" class="form-control" name="room_number" 
+                               placeholder="e.g., 301" required>
+                        <small class="text-muted">
+                            Suggested: Ground (1-99), First (101-199), Second (201-299)
+                        </small>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Capacity</label>
+                        <input type="number" class="form-control" name="capacity" 
+                               value="2" min="1" max="10" required>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn btn-success">
+                        <i class="fas fa-plus"></i> Add Room
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+function removeRoom(roomNumber) {
+    if (confirm(`Are you sure you want to remove Room ${roomNumber}?`)) {
+        window.location.href = `{{ url_for('remove_room', room_number=0) }}`.replace('0', roomNumber);
+    }
+}
+</script>
+{% endblock %}

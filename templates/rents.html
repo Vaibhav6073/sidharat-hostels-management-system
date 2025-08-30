@@ -1,0 +1,185 @@
+{% extends "base.html" %}
+
+{% block title %}Rents - Sidharat Hostels{% endblock %}
+
+{% block content %}
+<div class="row mb-4">
+    <div class="col-12">
+        <h1 class="text-center mb-4">
+            <i class="fas fa-rupee-sign text-primary"></i> 
+            Rent Management - {{ selected_month }} {{ selected_year }}
+        </h1>
+    </div>
+</div>
+
+<!-- Month/Year Selector -->
+<div class="row mb-4">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-body">
+                <form method="GET" class="row g-2 align-items-end">
+                    <div class="col-sm-4 col-6">
+                        <label class="form-label small">
+                            <i class="fas fa-calendar"></i> Month
+                        </label>
+                        <select class="form-control form-control-sm" name="month">
+                            {% for month in months %}
+                            <option value="{{ month }}" {% if month == selected_month %}selected{% endif %}>
+                                {{ month[:3] }}
+                            </option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="col-sm-3 col-4">
+                        <label class="form-label small">
+                            <i class="fas fa-calendar-alt"></i> Year
+                        </label>
+                        <select class="form-control form-control-sm" name="year">
+                            {% for year in years %}
+                            <option value="{{ year }}" {% if year == selected_year %}selected{% endif %}>
+                                {{ year }}
+                            </option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="col-sm-5 col-12">
+                        <button type="submit" class="btn btn-primary btn-sm w-100">
+                            <i class="fas fa-search"></i> <span class="d-none d-sm-inline">View Details</span><span class="d-sm-none">View</span>
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Rent Statistics -->
+<div class="row mb-4">
+    <div class="col-md-4">
+        <div class="stats-card">
+            <i class="fas fa-coins fa-3x mb-3"></i>
+            <h3>₹{{ total_rent }}</h3>
+            <p class="mb-0">Total Rent</p>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="stats-card bg-success">
+            <i class="fas fa-check-circle fa-3x mb-3"></i>
+            <h3>₹{{ paid_rent }}</h3>
+            <p class="mb-0">Collected</p>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="stats-card bg-danger">
+            <i class="fas fa-exclamation-triangle fa-3x mb-3"></i>
+            <h3>₹{{ pending_rent }}</h3>
+            <p class="mb-0">Pending</p>
+        </div>
+    </div>
+</div>
+
+<!-- Rent Details Table -->
+<div class="row">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0">
+                    <i class="fas fa-list"></i> Student Rent Status
+                </h5>
+            </div>
+            <div class="card-body">
+                {% if students %}
+                <div class="table-responsive">
+                    <table class="table table-hover">
+                        <thead>
+                            <tr>
+                                <th><i class="fas fa-user"></i> Student</th>
+                                <th><i class="fas fa-door-closed"></i> Room</th>
+                                <th><i class="fas fa-rupee-sign"></i> Monthly Fee</th>
+                                <th><i class="fas fa-calendar"></i> Last Paid</th>
+                                <th><i class="fas fa-check"></i> Status</th>
+                                <th><i class="fas fa-cogs"></i> Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for student in students %}
+                            <tr class="{% if not student.paid_this_month %}table-warning{% endif %}">
+                                <td>
+                                    <strong>{{ student.name }}</strong>
+                                </td>
+                                <td>
+                                    <span class="badge bg-primary">Room {{ student.room_number }}</span>
+                                </td>
+                                <td>
+                                    <span class="text-success fw-bold">₹{{ student.monthly_fee }}</span>
+                                </td>
+                                <td>
+                                    {% if student.last_rent_paid %}
+                                        {{ student.last_rent_paid }}
+                                    {% else %}
+                                        <span class="text-muted">Never</span>
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    {% if student.paid_this_month %}
+                                        <span class="badge bg-success">
+                                            <i class="fas fa-check"></i> Paid
+                                        </span>
+                                    {% else %}
+                                        <span class="badge bg-danger">
+                                            <i class="fas fa-times"></i> Due
+                                        </span>
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    {% if not student.paid_this_month %}
+                                        <a href="{{ url_for('mark_rent_paid', student_id=student.id, month=selected_month, year=selected_year) }}" 
+                                           class="btn btn-success btn-sm"
+                                           onclick="return confirm('Mark rent as paid for {{ student.name }} - {{ selected_month }} {{ selected_year }}?')">
+                                            <i class="fas fa-check"></i> Mark Paid
+                                        </a>
+                                    {% else %}
+                                        <span class="text-success">
+                                            <i class="fas fa-check-circle"></i> Completed
+                                        </span>
+                                    {% endif %}
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                
+                <!-- Summary -->
+                <div class="row mt-4">
+                    <div class="col-md-6">
+                        <div class="alert alert-info">
+                            <i class="fas fa-info-circle"></i>
+                            <strong>Collection Rate:</strong> 
+                            {{ "%.1f"|format((paid_rent/total_rent*100) if total_rent > 0 else 0) }}%
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="alert alert-warning">
+                            <i class="fas fa-users"></i>
+                            <strong>Pending Students:</strong> 
+                            {{ students|selectattr('paid_this_month', 'equalto', 0)|list|length }}
+                        </div>
+                    </div>
+                </div>
+                
+                {% else %}
+                <div class="text-center py-5">
+                    <i class="fas fa-users fa-4x text-muted mb-3"></i>
+                    <h4 class="text-muted">No Students Found</h4>
+                    <p class="text-muted">Add students to track their rent payments.</p>
+                    <a href="{{ url_for('add_student') }}" class="btn btn-primary">
+                        <i class="fas fa-plus"></i> Add Student
+                    </a>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

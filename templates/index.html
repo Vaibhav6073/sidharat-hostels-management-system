@@ -1,0 +1,115 @@
+{% extends "base.html" %}
+
+{% block title %}Dashboard - Sidharat Hostels{% endblock %}
+
+{% block content %}
+<div class="row mb-3">
+    <div class="col-12">
+        <h2 class="text-center mb-3 d-none d-md-block">
+            <i class="fas fa-tachometer-alt text-primary"></i> 
+            Hostel Management Dashboard
+        </h2>
+        <h4 class="text-center mb-3 d-md-none">
+            <i class="fas fa-tachometer-alt text-primary"></i> 
+            Dashboard
+        </h4>
+    </div>
+</div>
+
+<div class="row mb-4">
+    <div class="col-md-4 col-sm-6 mb-3">
+        <div class="stats-card">
+            <i class="fas fa-users fa-2x mb-2"></i>
+            <h4>{{ total_students }}</h4>
+            <p class="mb-0 small">Total Students</p>
+        </div>
+    </div>
+    <div class="col-md-4 col-sm-6 mb-3">
+        <div class="stats-card">
+            <i class="fas fa-bed fa-2x mb-2"></i>
+            <h4>{{ total_beds }}</h4>
+            <p class="mb-0 small">Total Beds</p>
+        </div>
+    </div>
+    <div class="col-md-4 col-sm-12 mb-3">
+        <div class="stats-card">
+            <i class="fas fa-door-open fa-2x mb-2"></i>
+            <h4>{{ available_beds }}</h4>
+            <p class="mb-0 small">Available Beds</p>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <h5 class="mb-0">
+                    <i class="fas fa-list"></i> Current Residents
+                </h5>
+                <a href="{{ url_for('add_student') }}" class="btn btn-success">
+                    <i class="fas fa-plus"></i> Add New Student
+                </a>
+            </div>
+            <div class="card-body">
+                {% if students %}
+                <div class="table-responsive">
+                    <table class="table table-hover table-sm">
+                        <thead>
+                            <tr>
+                                <th class="d-none d-md-table-cell">ID</th>
+                                <th>Name</th>
+                                <th class="d-none d-sm-table-cell">Phone</th>
+                                <th>Room</th>
+                                <th class="d-none d-lg-table-cell">Check-in</th>
+                                <th class="d-none d-md-table-cell">Fee</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for student in students %}
+                            <tr>
+                                <td class="d-none d-md-table-cell">{{ student.id }}</td>
+                                <td>
+                                    <strong>{{ student.name }}</strong>
+                                    <div class="d-sm-none small text-muted">{{ student.phone }}</div>
+                                    <div class="d-lg-none d-md-block small text-muted">{{ student.check_in_date }}</div>
+                                </td>
+                                <td class="d-none d-sm-table-cell">
+                                    {{ student.phone }}
+                                </td>
+                                <td>
+                                    <span class="badge bg-primary">{{ student.room_number }}</span>
+                                    <div class="d-md-none small text-success">₹{{ student.monthly_fee }}</div>
+                                </td>
+                                <td class="d-none d-lg-table-cell">{{ student.check_in_date }}</td>
+                                <td class="d-none d-md-table-cell">
+                                    <span class="text-success fw-bold">₹{{ student.monthly_fee }}</span>
+                                </td>
+                                <td>
+                                    <a href="{{ url_for('remove_student', student_id=student.id) }}" 
+                                       class="btn btn-danger btn-sm"
+                                       onclick="return confirm('Remove {{ student.name }}?')">
+                                        <i class="fas fa-trash"></i><span class="d-none d-lg-inline"> Remove</span>
+                                    </a>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                {% else %}
+                <div class="text-center py-5">
+                    <i class="fas fa-users fa-4x text-muted mb-3"></i>
+                    <h4 class="text-muted">No Students Registered</h4>
+                    <p class="text-muted">Start by adding your first student to the hostel.</p>
+                    <a href="{{ url_for('add_student') }}" class="btn btn-primary btn-lg">
+                        <i class="fas fa-plus"></i> Add First Student
+                    </a>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

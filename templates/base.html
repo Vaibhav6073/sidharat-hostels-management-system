@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Sidharat Hostels{% endblock %}</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #2c3e50;
+            --secondary-color: #3498db;
+            --accent-color: #e74c3c;
+            --success-color: #27ae60;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        .navbar {
+            background: var(--primary-color) !important;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        
+        .navbar-brand {
+            font-weight: bold;
+            font-size: 1.5rem;
+        }
+        
+        .main-container {
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            margin: 1rem auto;
+            padding: 1rem;
+            max-width: 1200px;
+        }
+        
+        @media (min-width: 768px) {
+            .main-container {
+                margin: 2rem auto;
+                padding: 2rem;
+            }
+        }
+        
+        .card {
+            border: none;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            transition: transform 0.3s ease;
+        }
+        
+        .card:hover {
+            transform: translateY(-5px);
+        }
+        
+        .btn-primary {
+            background: var(--secondary-color);
+            border: none;
+            border-radius: 25px;
+            padding: 10px 25px;
+        }
+        
+        .btn-danger {
+            background: var(--accent-color);
+            border: none;
+            border-radius: 25px;
+        }
+        
+        .btn-success {
+            background: var(--success-color);
+            border: none;
+            border-radius: 25px;
+        }
+        
+        .table {
+            border-radius: 10px;
+            overflow: hidden;
+        }
+        
+        .table thead {
+            background: var(--primary-color);
+            color: white;
+        }
+        
+        .stats-card {
+            background: linear-gradient(45deg, var(--secondary-color), var(--success-color));
+            color: white;
+            border-radius: 15px;
+            padding: 1rem;
+            text-align: center;
+            margin-bottom: 1rem;
+        }
+        
+        @media (min-width: 768px) {
+            .stats-card {
+                padding: 1.5rem;
+                margin-bottom: 0;
+            }
+        }
+        
+        .form-control {
+            border-radius: 10px;
+            border: 2px solid #e9ecef;
+            padding: 12px 15px;
+        }
+        
+        .form-control:focus {
+            border-color: var(--secondary-color);
+            box-shadow: 0 0 0 0.2rem rgba(52, 152, 219, 0.25);
+        }
+        
+        .input-group-sm .form-control {
+            font-size: 0.875rem;
+        }
+        
+        .input-group-sm .btn {
+            padding: 0.25rem 0.5rem;
+        }
+        
+        /* Mobile Optimizations */
+        @media (max-width: 767px) {
+            .navbar-brand {
+                font-size: 1.2rem;
+            }
+            
+            .navbar-nav .nav-link {
+                padding: 0.5rem 0.75rem;
+                font-size: 0.9rem;
+            }
+            
+            .btn {
+                padding: 0.5rem 1rem;
+                font-size: 0.9rem;
+            }
+            
+            .btn-sm {
+                padding: 0.25rem 0.5rem;
+                font-size: 0.8rem;
+            }
+            
+            .table {
+                font-size: 0.85rem;
+            }
+            
+            .card-title {
+                font-size: 1rem;
+            }
+            
+            .stats-card h3 {
+                font-size: 1.5rem;
+            }
+            
+            .form-control {
+                padding: 0.75rem;
+            }
+            
+            .input-group-sm .form-control {
+                font-size: 0.8rem;
+                padding: 0.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-dark">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="{{ url_for('index') }}">
+                <i class="fas fa-building"></i> <span class="d-none d-sm-inline">Sidharat Hostels</span><span class="d-sm-none">Sidharat</span>
+            </a>
+            
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <div class="navbar-nav me-auto">
+                    <a class="nav-link" href="{{ url_for('index') }}">
+                        <i class="fas fa-home"></i> <span class="d-lg-inline d-none">Dashboard</span>
+                    </a>
+                    <a class="nav-link" href="{{ url_for('add_student') }}">
+                        <i class="fas fa-user-plus"></i> <span class="d-lg-inline d-none">Add</span>
+                    </a>
+                    <a class="nav-link" href="{{ url_for('rooms') }}">
+                        <i class="fas fa-bed"></i> <span class="d-lg-inline d-none">Rooms</span>
+                    </a>
+                    <a class="nav-link" href="{{ url_for('rents') }}">
+                        <i class="fas fa-rupee-sign"></i> <span class="d-lg-inline d-none">Rents</span>
+                    </a>
+                    <a class="nav-link" href="{{ url_for('documents') }}">
+                        <i class="fas fa-file-alt"></i> <span class="d-lg-inline d-none">Docs</span>
+                    </a>
+                </div>
+                
+                <form class="d-flex" action="{{ url_for('search') }}" method="GET">
+                    <input class="form-control me-2" type="search" name="q" placeholder="Search..." style="width: 120px;">
+                    <button class="btn btn-outline-light btn-sm" type="submit">
+                        <i class="fas fa-search"></i>
+                    </button>
+                </form>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container">
+        <div class="main-container">
+            {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                    {% for category, message in messages %}
+                        {% if category == 'error' %}
+                            <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                                <i class="fas fa-exclamation-circle"></i> {{ message }}
+                                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                            </div>
+                        {% else %}
+                            <div class="alert alert-success alert-dismissible fade show" role="alert">
+                                <i class="fas fa-check-circle"></i> {{ message }}
+                                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                            </div>
+                        {% endif %}
+                    {% endfor %}
+                {% endif %}
+            {% endwith %}
+
+            {% block content %}{% endblock %}
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

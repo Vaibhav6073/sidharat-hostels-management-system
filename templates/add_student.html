@@ -1,0 +1,108 @@
+{% extends "base.html" %}
+
+{% block title %}Add Student - Sidharat Hostels{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-8 mx-auto">
+        <div class="card">
+            <div class="card-header text-center">
+                <h4 class="mb-0">
+                    <i class="fas fa-user-plus text-success"></i> 
+                    Add New Student
+                </h4>
+            </div>
+            <div class="card-body">
+                <form method="POST">
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="name" class="form-label">
+                                <i class="fas fa-user"></i> Student Name
+                            </label>
+                            <input type="text" class="form-control" id="name" name="name" 
+                                   placeholder="Enter full name" required>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="phone" class="form-label">
+                                <i class="fas fa-phone"></i> Phone Number
+                            </label>
+                            <input type="tel" class="form-control" id="phone" name="phone" 
+                                   placeholder="Enter phone number" required>
+                        </div>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="room_number" class="form-label">
+                            <i class="fas fa-door-closed"></i> Select Room
+                        </label>
+                        <select class="form-control" id="room_number" name="room_number" required>
+                            <option value="">Choose an available room...</option>
+                            {% for floor_num, floor_data in floors_data.items() %}
+                                <optgroup label="{{ floor_data.name }}">
+                                    {% for room in floor_data.rooms %}
+                                    <option value="{{ room.room_number }}">
+                                        Room {{ room.room_number }} ({{ room.capacity - room.occupied }} beds available)
+                                    </option>
+                                    {% endfor %}
+                                </optgroup>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    
+                    <div class="mb-4">
+                        <div class="alert alert-info">
+                            <i class="fas fa-info-circle"></i>
+                            <strong>Monthly Fee:</strong> ₹5,000 (Default)
+                        </div>
+                    </div>
+                    
+                    <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                        <a href="{{ url_for('index') }}" class="btn btn-secondary me-md-2">
+                            <i class="fas fa-arrow-left"></i> Back to Dashboard
+                        </a>
+                        <button type="submit" class="btn btn-success">
+                            <i class="fas fa-save"></i> Add Student
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+        
+        {% if floors_data %}
+        <div class="card mt-4">
+            <div class="card-header">
+                <h6 class="mb-0">
+                    <i class="fas fa-bed"></i> Available Rooms by Floor
+                </h6>
+            </div>
+            <div class="card-body">
+                {% for floor_num, floor_data in floors_data.items() %}
+                <div class="mb-3">
+                    <h6 class="text-primary">
+                        <i class="fas fa-layer-group"></i> {{ floor_data.name }}
+                    </h6>
+                    <div class="row">
+                        {% for room in floor_data.rooms %}
+                        <div class="col-md-3 mb-2">
+                            <div class="badge bg-light text-dark p-2 w-100">
+                                Room {{ room.room_number }}: {{ room.capacity - room.occupied }}/{{ room.capacity }} available
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+        {% else %}
+        <div class="card mt-4">
+            <div class="card-body text-center">
+                <i class="fas fa-exclamation-triangle fa-3x text-warning mb-3"></i>
+                <h5 class="text-warning">No Available Rooms</h5>
+                <p class="text-muted">All rooms are currently occupied. Please check back later.</p>
+            </div>
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

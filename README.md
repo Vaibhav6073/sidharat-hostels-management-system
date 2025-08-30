@@ -1,0 +1,3 @@
+This a is very efficetive hostel management system app which comes with a very great featyres which help user to manage their hostel students very effective manner. This app contains so much options which is so much b.eneficial for a user to manage their students in the hostel. This app comes with a great ui and gui with a clean interface which is so much easy to be understable by the user only.
+Some of the usefull features of this app are, This app has a different sections for diffrent tasks, This has a room menu,fee management menu,document management menuor so on for a better expreience to the user.
+For any query rederging this app any one can email me in my email or call me on 91 9508470090. Calling time IST 1PM TO 6PM OR 5AM TO 8AM
